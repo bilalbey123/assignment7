@@ -1,0 +1,2 @@
+import { Link } from 'react-router';
+export function ProductCard({ product }) { return <article className="product-card"><Link to={`/products/${product.id}`} className="product-image-link"><img src={product.thumbnail} alt={product.title} loading="lazy"/><span className="image-arrow">↗</span></Link><div className="product-meta"><span>{product.category}</span><span>★ {product.rating?.toFixed(1) ?? '—'}</span></div><Link className="product-title" to={`/products/${product.id}`}>{product.title}</Link><div className="product-price">${product.price.toFixed(2)}</div></article>; }
