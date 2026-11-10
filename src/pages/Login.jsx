@@ -1,0 +1,12 @@
+import { useState } from 'react';
+import { Navigate, useLocation, useNavigate } from 'react-router';
+import { login } from '../api/authApi';
+import { useAuth } from '../context/AuthContext';
+export function Login() {
+  const [username, setUsername] = useState(''); const [password, setPassword] = useState(''); const [loading, setLoading] = useState(false); const [error, setError] = useState('');
+  const { dispatch, user } = useAuth(); const location = useLocation(); const navigate = useNavigate();
+  const destination = location.state?.from?.pathname ? `${location.state.from.pathname}${location.state.from.search ?? ''}` : '/';
+  async function handleSubmit(event) { event.preventDefault(); setLoading(true); setError(''); try { const signedInUser = await login(username, password); dispatch({ type: 'LOGGED_IN', user: signedInUser }); navigate(destination, { replace: true }); } catch (err) { setError(err.message === 'Invalid credentials' ? 'That email and password don’t match. Please try again.' : 'Sign in failed. Please try again.'); } finally { setLoading(false); } }
+  if (user) return <Navigate to="/" replace/>;
+  return <section className="login-page"><div className="login-art"><div className="login-art-top"><span className="eyebrow">A NOTE FROM EVERYDAY</span><span>NO. 001</span></div><div className="login-art-center"><span className="login-sun">✳</span><p>“The best things in life<br/>are the ones you use <em>every day.</em>”</p></div><span className="login-art-bottom">A SMALL SHOP FOR THE EVERYDAY</span></div><div className="login-panel"><span className="eyebrow muted">WELCOME BACK</span><h1>Good to see<br/>you <em>again.</em></h1><p>Sign in to see your bag and pick up where you left off.</p><form onSubmit={handleSubmit}><label>Email address<input type="email" autoComplete="username" value={username} onChange={(event) => setUsername(event.target.value)} required placeholder="you@example.com"/></label><label>Password<input type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required placeholder="Enter your password"/></label>{error && <div className="form-error" role="alert">{error}</div>}<button className="button button-dark sign-in-button" type="submit" disabled={loading}>{loading ? <><span className="spinner light-spinner"/> Signing you in…</> : <>Sign in <span>↗</span></>}</button></form><div className="demo-hint">DEMO ACCESS <span>Use your student email · password: demo123456</span></div></div></section>;
+}
